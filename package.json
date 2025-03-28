@@ -1,5 +1,6 @@
 {
-  "name": "astro-components",
+  "name": "primer-astro",
+  "description": "collection of Github Primer components ported to Astrojs",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -9,6 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@primer/brand-primitives": "^0.47.2",
+    "@primer/primitives": "^10.5.0",
+    "@primer/react-brand": "^0.47.2",
     "astro": "^5.5.2"
   }
 }
