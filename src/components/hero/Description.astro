@@ -1,0 +1,24 @@
+---
+import styles from './Hero.module.css'
+
+import Text from "../text/index.astro"
+
+type HeroDescriptionProps = {
+    size?: (typeof TextSizes)[number]
+    weight?: TextWeightVariants | ResponsiveWeightMap
+  } & BaseProps<HTMLParagraphElement> &
+    TextProps
+
+const {size = '200', weight, children, variant = 'default', class: className} = Astro.props
+---
+
+<Text
+  class:list={[styles['Hero-description'], className]}
+  as="p"
+  size={size}
+  weight={weight}
+  variant={variant}
+>
+  <slot />
+</Text>
+  

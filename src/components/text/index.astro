@@ -1,0 +1,141 @@
+---
+// adapted from https://github.com/primer/brand/blob/main/packages/react/src/Text/Text.tsx
+
+import type { HTMLAttributes } from "astro/types";
+
+import styles from './Text.module.css'
+
+type BaseProps = {
+  className?: string
+  id?: string
+  // animate?: AnimateProps
+}
+
+// https://github.com/withastro/compiler/issues/554
+// => do not export types
+const TextSizes = ['700', '600', '500', '400', '300', '200', '100'] as const;
+const TextTags = ['p', 'span', 'div', 'strong', 'em'] as const;
+const TextVariants = ['default', 'muted'] as const;
+const TextWeights = [
+  'heavy',
+  'extrabold',
+  'bold',
+  'semibold',
+  'medium',
+  'normal',
+  'light',
+  'extralight',
+] as const;
+const TextFontVariants = ['mona-sans', 'hubot-sans', 'monospace'] as const
+
+const defaultTextTag = TextTags[1]
+const defaultTextSize = TextSizes[5]
+const defaultTextVariant = TextVariants[0]
+const defaultFontVariant = TextFontVariants[0]
+
+type TextWeightVariants = (typeof TextWeights)[number]
+type TextFontVariants = (typeof TextFontVariants)[number]
+
+type ResponsiveWeightMap = {
+  narrow?: TextWeightVariants
+  regular?: TextWeightVariants
+  wide?: TextWeightVariants
+}
+
+type RestrictedPolymorphism = BaseProps & (
+    (HTMLAttributes<"p"> & {as?: 'p'})
+  | (HTMLAttributes<"span"> & {as?: 'span'})
+  | (HTMLAttributes<"div"> & {as?: 'div'})
+  | (HTMLAttributes<"strong"> & {as?: 'strong'})
+  | (HTMLAttributes<"em"> & {as?: 'em'})
+)
+
+type TextTags = {
+  /**
+   * Applies the underlying HTML element
+   */
+  as?: (typeof TextTags)[number]
+} & RestrictedPolymorphism
+
+type Props = {
+  font?: TextFontVariants
+  /**
+   * Specify the text size
+   */
+  size?: (typeof TextSizes)[number]
+  /**
+   * Specify alternative text appearance
+   */
+  variant?: (typeof TextVariants)[number]
+  /**
+   * Specify the text weight
+   */
+  weight?: TextWeightVariants | ResponsiveWeightMap
+  /**
+   * Specify the text alignment.
+   * Corresponds to the CSS `text-align` property.
+   * Note: Only applies to block elements.
+   */
+  align?: 'start' | 'center' | 'end'
+  /**
+   * Toggle antialiasing on or off
+   */
+  hasAntiAliasing?: boolean
+} & TextTags
+
+const {
+  align,
+  // animate,
+  as: Component = defaultTextTag,
+  className,
+  font = defaultFontVariant,
+  size = defaultTextSize,
+  variant = defaultTextVariant,
+  weight,
+  style,
+  hasAntiAliasing = true,
+  //
+  ...rest
+} = Astro.props as Props;
+
+// @todo
+const {classes: animationClasses, styles: animationInlineStyles} = {classes:[], styles: []} // useAnimation(animate)
+
+const weightClass = ((weight?: TextWeightVariants | ResponsiveWeightMap) => {
+  if (!weight) return null
+
+  return typeof weight === 'string'
+    ? styles[`Text--weight-${weight}`]
+    : Object.keys(weight)
+        .map(viewport => {
+          return styles[`Text-${viewport}--weight-${weight[viewport as keyof ResponsiveWeightMap]}`]
+        })
+        .join(' ')
+})(weight)
+
+const dontApplyAA = Boolean(
+  // When explicitly disabled
+  !hasAntiAliasing ||
+    // When selected font weight is not suitable for anti-aliasing
+    (weight && ['light', 'extralight'].includes(weight as TextWeightVariants) && ['100', '200'].includes(size)) ||
+    // When size is too small
+    size === '100',
+)
+---
+
+<!-- style={{...animationInlineStyles, ...style}} -->
+<Component class:list={[
+    animationClasses,
+    styles.Text,
+    styles[`Text-font--${font}`],
+    styles[`Text--${variant}`],
+    styles[`Text--${size}`],
+    !dontApplyAA && styles['Text--antialiased'],
+    weight && weightClass,
+    align && styles[`Text-align--${align}`],
+    className,
+    ]} 
+    {...rest}
+  >
+    <slot />
+</Component>

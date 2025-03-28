@@ -1,0 +1,24 @@
+---
+/**
+ * Design tokens
+ */
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/timeline/colors-with-modes.css'
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/timeline/base.css'
+
+import styles from './Timeline.module.css'
+
+const {class: className, fullWidth, animationClasses, animationInlineStyles, ...rest} = Astro.props
+---
+
+<ul 
+  class:list={[
+    animationClasses,
+    styles.Timeline,
+    fullWidth && styles['Timeline--full-width'],
+    className
+  ]}
+  style={{...animationInlineStyles}}
+  {...rest}
+>
+  <slot />
+</ul>

@@ -1,0 +1,181 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/size/size.css';
+
+import styles from './Stack.module.css';
+
+import {BaseSizeScale} from '../constants';
+
+const StackDirectionVariants = ['horizontal', 'vertical'] as const
+type StackDirectionVariants = (typeof StackDirectionVariants)[number]
+const defaultStackDirection = StackDirectionVariants[1]
+
+const StackSpacingVariants = ['none', 'condensed', 'normal', 'spacious', ...BaseSizeScale] as const
+type StackSpacingVariants = (typeof StackSpacingVariants)[number]
+const defaultStackSpacing = StackSpacingVariants[1]
+
+const StackAlignItemVariants = ['center', 'flex-start', 'flex-end'] as const
+type StackAlignItemVariants = (typeof StackAlignItemVariants)[number]
+
+const StackFlexWrapVariants = ['wrap', 'nowrap'] as const
+type StackFlexWrapVariants = (typeof StackFlexWrapVariants)[number]
+
+const StackJustifyContentVariants = [
+  ...StackAlignItemVariants,
+  'space-between',
+  'space-around',
+  'space-evenly',
+] as const
+type justifyContentVariants = (typeof StackJustifyContentVariants)[number]
+
+type ResponsiveJustifyContentMap = {
+  narrow?: justifyContentVariants
+  regular?: justifyContentVariants
+  wide?: justifyContentVariants
+}
+
+type ResponsiveAlignItemsMap = {
+  narrow?: StackAlignItemVariants
+  regular?: StackAlignItemVariants
+  wide?: StackAlignItemVariants
+}
+
+type ResponsiveDirectionMap = {
+  narrow?: StackDirectionVariants
+  regular?: StackDirectionVariants
+  wide?: StackDirectionVariants
+}
+
+type ResponsiveSpacingMap = {
+  narrow?: StackSpacingVariants
+  regular?: StackSpacingVariants
+  wide?: StackSpacingVariants
+}
+
+type ResponsiveFlexWrapMap = {
+  narrow?: StackFlexWrapVariants
+  regular?: StackFlexWrapVariants
+  wide?: StackFlexWrapVariants
+}
+
+
+type Props = { // BaseProps<HTMLElement> & {
+  /**
+   * Defines the flex-direction CSS property.
+   * A string value will be applied to all viewports.
+   * An object can be used to define different values for different viewports.
+   */
+  direction?: StackDirectionVariants | ResponsiveDirectionMap
+  /**
+   * Defines the gap CSS property.
+   * A string value will be applied to all viewports.
+   * An object can be used to define different values for different viewports.
+   */
+  gap?: StackSpacingVariants | ResponsiveSpacingMap
+  /**
+   * Applies vertical alignment to child elements relative to the Stack, using the align-items CSS property.
+   * A string value will be applied to all viewports.
+   * An object can be used to define different values for different viewports.
+   */
+  alignItems?: StackAlignItemVariants | ResponsiveAlignItemsMap
+  /**
+   * Defines the padding CSS property on the parent Stack.
+   * A string value will be applied to all viewports.
+   * An object can be used to define different values for different viewports.
+   */
+  padding?: StackSpacingVariants | ResponsiveSpacingMap
+  /**
+   * Applies horizontal alignment to child elements relative to the Stack, using the justify-content CSS property.
+   * A string value will be applied to all viewports.
+   * An object can be used to define different values for different viewports.
+   */
+  justifyContent?: justifyContentVariants | ResponsiveJustifyContentMap
+  /**
+   * Forward inline styles
+   */
+  // style?: React.CSSProperties
+  /**
+   * Applies flex-wrap to the Stack, using the flex-wrap CSS property.
+   */
+  flexWrap?: StackFlexWrapVariants | ResponsiveFlexWrapMap
+} & HTMLAttributes<"div">;
+
+const   {
+    // animate,
+    children,
+    direction = defaultStackDirection,
+    gap = defaultStackSpacing,
+    alignItems,
+    padding = defaultStackSpacing,
+    justifyContent,
+    class: className,
+    style,
+    flexWrap,
+    ...rest
+  } = Astro.props
+
+const {classes: animationClasses, styles: animationInlineStyles} = {classes:{}, styles: {}} // useAnimation(animate)
+
+const directionClass = 
+    typeof direction === 'string'
+      ? styles[`Stack--${direction}`]
+      : Object.keys(direction)
+          .map(viewport => styles[`Stack-${viewport}--${direction[viewport as keyof ResponsiveDirectionMap]}`])
+          .join(' ')
+
+const gapClass = typeof gap === 'string' || typeof gap === 'number'
+      ? styles[`Stack--gap-${gap}`]
+      : Object.keys(gap)
+          .map(viewport => styles[`Stack-${viewport}--gap-${gap[viewport as keyof ResponsiveSpacingMap]}`])
+          .join(' ')
+
+const paddingClass =
+    typeof padding === 'string' || typeof padding === 'number'
+      ? styles[`Stack--padding-${padding}`]
+      : Object.keys(padding)
+          .map(viewport => styles[`Stack-${viewport}--padding-${padding[viewport as keyof ResponsiveSpacingMap]}`])
+          .join(' ')
+
+const alignItemsClass = typeof alignItems === 'string'
+      ? styles[`Stack--align-items-${alignItems}`]
+      : typeof alignItems === 'object'
+      ? Object.keys(alignItems)
+          .map(viewport => styles[`Stack-${viewport}--align-items-${alignItems[viewport as keyof ResponsiveAlignItemsMap]}`])
+          .join(' ')
+      : null
+
+const justifyContentClass = typeof justifyContent === 'string'
+      ? styles[`Stack--justify-content-${justifyContent}`]
+      : typeof justifyContent === 'object'
+      ? Object.keys(justifyContent)
+          .map(viewport => styles[`Stack-${viewport}--justify-content-${justifyContent[viewport as keyof  ResponsiveJustifyContentMap]}`])
+          .join(' ')
+      : null
+
+const flexWrapClass =
+    typeof flexWrap === 'string'
+      ? styles[`Stack-flexWrap--${flexWrap}`]
+      : typeof flexWrap === 'object'
+      ? Object.keys(flexWrap)
+          .map(viewport => styles[`Stack-${viewport}-flexWrap--${flexWrap[viewport as keyof ResponsiveFlexWrapMap]}`])
+          .join(' ')
+      : null
+
+---
+<!-- style={{...animationInlineStyles, ...style}} -->
+<div
+  class:list={[
+    animationClasses,
+    styles.Stack,
+    directionClass,
+    gapClass,
+    alignItemsClass,
+    justifyContentClass,
+    paddingClass,
+    flexWrapClass,
+    className,
+  ]}
+  {...rest}
+  >
+  <slot />
+</div>

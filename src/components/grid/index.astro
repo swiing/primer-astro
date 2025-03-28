@@ -1,0 +1,69 @@
+---
+/**
+ * Design tokens
+ */
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/grid/grid.css'
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/grid/colors-with-modes.css'
+
+/** * Main Stylesheet (as a CSS Module) */
+import styles from './Grid.module.css'
+
+type ResponsiveMap = {
+  xsmall?: GridColumnIndex
+  small?: GridColumnIndex
+  medium?: GridColumnIndex
+  large?: GridColumnIndex
+  xlarge?: GridColumnIndex
+  xxlarge?: GridColumnIndex
+}
+
+type GridColumnIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+
+type GridProps<T extends keyof JSX.IntrinsicElements = 'div'> = React.HTMLAttributes<T> & {
+  /**
+   * The HTML element used to render the grid.
+   */
+  as?: T | 'div' | 'span' | 'section'
+  /**
+   * Visual aid to help with alignment.
+   */
+  enableOverlay?: boolean
+  /**
+   * Fills the width of the parent container and removes the max-width.
+   */
+  fullWidth?: boolean
+  
+} & (T extends 'span'
+    ? BaseProps<HTMLSpanElement>
+    : T extends 'section'
+    ? BaseProps<HTMLElement>
+    : BaseProps<HTMLDivElement>)
+
+const {
+    class: className,
+    children,
+    as = 'div',
+    fullWidth = false,
+    enableOverlay = false,
+    ['data-testid']: testId,
+    ...rest
+  } = Astro.props
+
+
+const validElements = ['div', 'span', 'section']
+const Component = validElements.includes(as) ? as : 'div'
+---
+    
+<Component
+  class:list={[
+    styles.Grid,
+    enableOverlay && styles['Grid--has-overlay'],
+    fullWidth && styles['Grid--full-width'],
+    className,
+  ]}
+  {...(rest as HTMLAttributes<HTMLElement>)}
+>
+  <slot />
+</Component>
+    
+

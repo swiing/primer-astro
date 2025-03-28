@@ -1,0 +1,19 @@
+---
+import Button from "../button/index.astro"
+
+type RestrictedPolymorphism =
+  | (BaseProps<HTMLAnchorElement> & {as?: 'a'})
+  | (BaseProps<HTMLButtonElement> & {as?: 'button'})
+
+type Props = {
+  as?: 'a' | 'button'
+  href: string
+} & ButtonBaseProps &
+  RestrictedPolymorphism
+
+const {href, as = 'a', ...rest} = Astro.props
+---
+
+<Button as={as} variant="primary" size="medium" href={href} {...rest} >
+  <slot />
+</Button>

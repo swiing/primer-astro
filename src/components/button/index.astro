@@ -1,0 +1,192 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Text from "../text/index.astro"
+
+import _style from "../expandable-arrow/ExpandaleArrow.module.css"
+import ExpandableArrow from "../expandable-arrow/index.astro"
+
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/button/colors-with-modes.css'
+import styles from './Button.module.css'
+
+export const ButtonVariants = ['primary', 'secondary', 'subtle'] as const
+export const ButtonSizes = ['small', 'medium', 'large'] as const
+
+export const defaultButtonVariant = ButtonVariants[1]
+export const defaultButtonSize = ButtonSizes[1]
+
+type ButtonBaseProps = {
+  /**
+   * The leading visual appears before the button content
+   */
+//   leadingVisual?: ReactElement | Icon
+  /**
+   * The trailing visual appears after the button content
+   */
+//   trailingVisual?: ReactElement | Icon
+  /**
+   * The styling variations available in Button
+   */
+  variant?: (typeof ButtonVariants)[number]
+  /**
+   * The size variations available in Button
+   */
+  size?: (typeof ButtonSizes)[number]
+  /**
+   * A flag to show/hide the arrow icon
+   */
+  hasArrow?: boolean
+  /**
+   * The Button spans the full width
+   */
+  block?: boolean
+}
+
+// should be something like HTMLAttributes<C>
+type Props<C extends HTMLElement> = HTMLAttributes<"button"> & {
+  as?: C
+} & ButtonBaseProps
+
+const {
+  animate,
+  as,
+  variant = defaultButtonVariant,
+  size = defaultButtonSize,
+  hasArrow = true,
+  block = false,
+  className,
+  children,
+  disabled,
+  'aria-disabled': ariaDisabled,
+  onMouseEnter,
+  onMouseLeave,
+  onFocus,
+  onBlur,
+  leadingVisual: LeadingVisual,
+  trailingVisual: TrailingVisual,
+  style,
+
+  // added for Astro
+  is = as && as !== "button" ? "" : "primer-button",
+
+  ...props
+} = Astro.props;
+
+const Component = as || "button"
+
+const isDisabled = disabled || ariaDisabled === 'true' || (typeof ariaDisabled === 'boolean' && ariaDisabled === true)
+---
+
+<!-- onMouseEnter={handleOnMouseEnter}
+  onMouseLeave={handleOnMouseLeave}
+  onFocus={handleOnFocus}
+  onBlur={handleOnBlur}
+  disabled={disabled}
+  aria-disabled={ariaDisabled} -->
+<Component is={is}
+  class:list={[
+    styles.Button,
+    styles[`Button--${variant}`],
+    styles[`Button--size-${size}`],
+    block && styles['Button--block'],
+    // isDisabled && styles[`Button--disabled`],
+    // animationClasses,
+    className
+  ]}
+
+  style={{ /* ...animationInlineStyles, */ ...style}}
+  {...props}
+>
+  <!-- {LeadingVisualComponent && (
+    <span className={styles['Button__leading-visual']} data-testid={testIds.leadingVisual}>
+      {React.cloneElement(LeadingVisualComponent as React.ReactElement, {
+        className: clsx(styles['Button__icon-visual'], isDisabled && styles['Button__icon-visual--disabled']),
+        ['aria-hidden']: 'true',
+        focusable: 'false',
+      })}
+    </span>
+  )} -->
+
+  <span class={styles['Button__text']}>
+    <Text
+      as="span"
+      size={size === 'small' ? '100' : size === 'medium' ? '200' : '400'}
+      weight="semibold"
+      class:list={[
+        styles['Button--label'],
+        styles[`Button--label-${size}`],
+        styles[`Button--label-${variant}`],
+        /* isDisabled && */ styles[`Button-label--disabled`],
+      ]}
+    >
+      <slot />
+    </Text>
+  </span>
+
+  {!TrailingVisual && hasArrow && (
+    <span class:list={[styles['Button__trailing-visual']]}>
+      <ExpandableArrow
+        hidden
+        class:list={[styles['Button-arrow'], /* isDisabled && */ styles[`Button-arrow--disabled`]]}
+        expanded={!isDisabled /* && (isHovered || isFocused) */}
+      />
+    </span>
+  )}
+  <!-- {TrailingVisualComponent && (
+    <span className={clsx(styles['Button__trailing-visual'])} data-testid={testIds.trailingVisual}>
+      {React.cloneElement(TrailingVisualComponent as React.ReactElement, {
+        className: clsx(styles['Button__icon-visual'], isDisabled && styles['Button__icon-visual--disabled']),
+        ['aria-hidden']: 'true',
+        focusable: 'false',
+      })}
+    </span>
+  )} -->
+</Component>
+
+<script>
+
+    // Define the behaviour for our new type of HTML element.
+    class PrimerButton extends HTMLButtonElement {
+    constructor() {
+      super();
+
+      this.addEventListener('click', () => {
+        console.log('clicked')
+      });
+
+      this.addEventListener('mouseenter', () => {
+        console.log('mouseenter')
+        this.setAttribute('data-hovered', "true")
+      });
+    }
+  }
+
+  customElements.define('primer-button', PrimerButton, {extends: 'button'});
+
+  // const handleOnMouseEnter = event => {
+  //     if (!isDisabled) {
+  //       setIsHovered(true)
+  //       onMouseEnter?.(event)
+  //     }
+  //   }
+
+  // const handleOnMouseLeave = event => {
+  //     if (!isDisabled) {
+  //       setIsHovered(false)
+  //       onMouseLeave?.(event)
+  //     }
+  //   }
+
+  // const handleOnFocus = event => {
+  //     if (!isDisabled) {
+  //       setIsFocused(true)
+  //       onFocus?.(event)
+  //     }
+  //   }
+
+  // const handleOnBlur = event => {
+  //     if (!isDisabled) {
+  //       setIsFocused(false)
+  //       onBlur?.(event)
+  //     }
+  //   }
+</script>

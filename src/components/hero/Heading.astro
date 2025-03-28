@@ -1,0 +1,20 @@
+---
+import styles from './Hero.module.css'
+
+import Heading from "../heading/index.astro"
+
+type Props = Omit<HeadingProps, 'as'> & {
+    fullWidth?: boolean
+  }
+
+const { fullWidth = false, ...rest} = Astro.props
+---
+
+<Heading
+  id="hero-section-brand-heading"
+  class:list={[styles['Hero-heading'], fullWidth && styles['Hero-heading--fullWidth']]}
+  as="h1"
+  {...rest}
+>
+  <slot />
+</Heading>

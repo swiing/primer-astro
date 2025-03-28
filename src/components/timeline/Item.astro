@@ -1,0 +1,31 @@
+---
+import styles from './Timeline.module.css'
+import Text from '../text/index.astro'
+
+const {class: className, fullWidth, animationClasses, ...rest} = Astro.props
+
+// const getConditionalVariant = () => {
+//   if (childrenArray.some(child => React.isValidElement(child) && (child.type === 'b' || child.type === 'em'))) {
+//     return 'muted'
+//   }
+//   return 'default'
+// }
+
+const defaultColor = 'muted' // childrenArray.length === 1 ? 'default' : getConditionalVariant()
+---
+
+<li
+  class:list={[
+    styles['Timeline__item'],
+    className
+  ]}
+  {...rest}
+>
+  <Text
+    class={styles['Timeline__item-text']}
+    size="200"
+    variant={defaultColor}
+  >
+    <slot />
+  </Text>
+</li>

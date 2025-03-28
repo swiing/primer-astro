@@ -1,0 +1,85 @@
+---
+import styles from './Hero.module.css'
+
+// import {Button, ButtonBaseProps} from '../Button'
+// import {Heading, HeadingProps} from '../Heading'
+// import {Text, TextSizes, TextWeightVariants, ResponsiveWeightMap, TextProps} from '../Text'
+// import {Label, LabelProps} from '../Label'
+// import {Image, ImageProps} from '../Image'
+
+import Grid from '../grid/index.astro'
+import Column from "../grid/Column.astro"
+import Stack from '../stack/index.astro'
+
+import type {BaseProps} from '../component-helpers'
+
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/hero/base.css'
+
+type Props = BaseProps<HTMLElement> & {
+  align?: 'start' | 'center'
+  imageContainerClassName?: string
+  imageContainerStyle?: React.CSSProperties
+  /**
+   * Escape-hatch for inserting custom React components.
+   * Warning:
+   *   This prop isn't advertised in our docs but remains part of the public API for edge-cases.
+   *   Need to use this prop? Please check in with #primer-brand first to confirm correct usage.
+   */
+  trailingComponent?: React.FunctionComponent
+}
+
+const {
+    className,
+    align = 'start',
+    children,
+    imageContainerClassName,
+    imageContainerStyle,
+    trailingComponent: TrailingComponent,
+    ...rest
+  } = Astro.props
+
+const imagePosition = /* HeroImageChild?.props?.position || */ 'block-end'
+
+const heroLayoutClass = /* HeroImageChild ? styles['Hero--layout-image'] : */ styles['Hero--layout-default']
+---
+
+<section
+  class:list={[
+    styles.Hero,
+    imagePosition !== 'inline-end' && styles[`Hero--align-${align}`],
+    heroLayoutClass,
+    Astro.slots.has('HeroImageChild') && styles[`Hero--image-pos-${imagePosition}`],
+    className,
+  ]}
+  aria-labelledby="hero-section-brand-heading"
+  {...rest}
+>
+  <Grid fullWidth class:list={[styles['Hero-grid'], styles[`Hero-grid--${imagePosition}`]]}>
+    <Column span={{medium: Astro.slots.has('HeroImageChild') && imagePosition === 'inline-end' ? 6 : 12}}>
+      <Stack
+        direction="vertical"
+        gap="none"
+        padding="none"
+        alignItems={imagePosition === 'inline-end' || align === 'start' ? 'flex-start' : 'center'}
+        justifyContent={imagePosition === 'inline-end' ? undefined : align === 'start' ? 'flex-start' : 'center'}
+      >
+        <slot />
+        {Astro.slots.has("HeroActions") && <div className={styles['Hero-actions']}><slot name="HeroActions" /></div>}
+        {TrailingComponent && (
+          <div class:list={styles['Hero-trailing']}>
+            <TrailingComponent />
+          </div>
+        )}
+      </Stack>
+    </Column>
+    {Astro.slots.has("HeroImageChild") && (
+      <Column
+        span={{medium: imagePosition === 'inline-end' ? 6 : 12}}
+        class:list={imageContainerClassName}
+        style={{...imageContainerStyle}}
+      >
+        <slot name="HeroImageChild" />
+      </Column>
+    )}
+  </Grid>
+</section>

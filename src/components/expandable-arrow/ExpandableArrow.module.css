@@ -1,0 +1,41 @@
+.ExpandableArrow {
+  transition: transform 200ms;
+  transform: translateX(0);
+}
+
+/* .ExpandableArrow--expanded {
+  transform: translateX(4px);
+} */
+
+.ExpandableArrow-stem {
+  stroke-dasharray: 10;
+  stroke-dashoffset: 10;
+  transition: stroke-dashoffset 200ms;
+}
+
+/* .ExpandableArrow-stem--expanded {
+  stroke-dashoffset: 20;
+} */
+
+.ExpandableArrow--reversed {
+  transform: rotate(180deg);
+}
+
+/* .ExpandableArrow--reversed.ExpandableArrow--expanded {
+  transform: rotate(180deg) translateX(4px);
+} */
+
+/* Button:not([disabled]):hover .ExpandableArrow--expanded,
+Button:not([disabled]):focus .ExpandableArrow--expanded {
+  transform: translateX(4px);
+}
+
+Button:not([disabled]):hover .ExpandableArrow-stem--expanded,
+Button:not([disabled]):focus .ExpandableArrow-stem--expanded {
+  stroke-dashoffset: 20;
+}
+
+Button:not([disabled]):hover .ExpandableArrow--reversed.ExpandableArrow--expanded,
+Button:not([disabled]):focus .ExpandableArrow--reversed.ExpandableArrow--expanded {
+  transform: rotate(180deg) translateX(4px);
+} */

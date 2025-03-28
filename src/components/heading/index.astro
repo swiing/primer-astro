@@ -1,0 +1,125 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import styles from './Heading.module.css'
+
+const HeadingSizes = ['display', '1', '2', '3', '4', '5', '6', 'subhead-large', 'subhead-medium'] as const
+const HeadingTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const
+
+const HeadingWeights = [
+  'heavy',
+  'extrabold',
+  'bold',
+  'semibold',
+  'medium',
+  'normal',
+  'light',
+  'extralight',
+] as const
+const HeadingStretch = ['condensed', 'normal', 'expanded'] as const
+const HeadingLetterSpacing = ['condensed', 'normal', 'none'] as const
+const HeadingFontVariants = ['mona-sans', 'hubot-sans', 'monospace'] as const
+
+const defaultHeadingTag = HeadingTags[1]
+const defaultHeadingFont = HeadingFontVariants[0]
+
+type HeadingWeightVariants = (typeof HeadingWeights)[number]
+type HeadingStretchVariants = (typeof HeadingStretch)[number]
+type HeadingLetterSpacingVariants = (typeof HeadingLetterSpacing)[number]
+type HeadingFontVariants = (typeof HeadingFontVariants)[number]
+
+type ResponsiveStretchMap = {
+  narrow?: HeadingStretchVariants
+  regular?: HeadingStretchVariants
+  wide?: HeadingStretchVariants
+}
+
+type ResponsiveLetterSpacingMap = {
+  narrow?: HeadingLetterSpacingVariants
+  regular?: HeadingLetterSpacingVariants
+  wide?: HeadingLetterSpacingVariants
+}
+
+type ResponsiveWeightMap = {
+  narrow?: HeadingWeightVariants
+  regular?: HeadingWeightVariants
+  wide?: HeadingWeightVariants
+}
+
+const classMap = {
+  h1: HeadingSizes[1],
+  h2: HeadingSizes[2],
+  h3: HeadingSizes[3],
+  h4: HeadingSizes[4],
+  h5: HeadingSizes[5],
+  h6: HeadingSizes[6],
+}
+
+type Props = {
+  as?: (typeof HeadingTags)[number]
+  size?: (typeof HeadingSizes)[number]
+  weight?: HeadingWeightVariants | ResponsiveWeightMap
+  stretch?: HeadingStretchVariants | ResponsiveStretchMap
+  letterSpacing?: HeadingLetterSpacingVariants | ResponsiveLetterSpacingMap
+  font?: HeadingFontVariants
+} & HTMLAttributes<"h2">
+
+const {
+    animate,
+    class: className,
+    as = defaultHeadingTag,
+    size,
+    letterSpacing,
+    weight,
+    stretch,
+    style,
+    font = 'mona-sans',
+    ...rest
+  } = Astro.props
+
+// const {classes: animationClasses, styles: animationInlineStyles} = useAnimation(animate)
+
+const buildClass = (type: string, value: any) => {
+  if (!value) return null
+  return typeof value === 'string'
+    ? styles[`Heading--${type}-${value}`]
+    : Object.keys(value)
+        .map(viewport => {
+          return styles[`Heading-${viewport}--${type}-${value[viewport]}`]
+        })
+        .join(' ')
+}
+
+const weightClass = buildClass('weight', weight)
+const stretchClass = buildClass('stretch', stretch)
+const letterSpacingClass = buildClass('letter-spacing', letterSpacing)
+
+const HeadingComponent = 
+  (({...props}: Props) => {console.log(as, HeadingTags.includes(as))
+    if (!HeadingTags.includes(as)) {
+      // eslint-disable-next-line no-console
+      console.error(`Heading: 'as' prop must be one of ${HeadingTags.join(', ')}`)
+      return null
+    }
+
+    return as // React.createElement(as, props, children)
+  })(Astro.props)
+---
+
+<HeadingComponent
+  class:list={[
+    // animationClasses,
+    styles.Heading,
+    styles[`Heading-font--${font}`],
+    !size && styles[`Heading--${classMap[as as (typeof HeadingTags)[number]]}`],
+    size && styles[`Heading--${size}`],
+    weight && weightClass,
+    stretch && stretchClass,
+    letterSpacingClass && letterSpacingClass,
+    className
+  ]}
+  style={{/* ...animationInlineStyles,*/ ...style}} 
+  {...rest}
+>
+  <slot />
+</HeadingComponent>

@@ -1,0 +1,9 @@
+---
+type HeroLabelProps = LabelProps & BaseProps<HTMLSpanElement>
+
+const {class: className, ...rest} = Astro.props
+---
+ 
+<Label ref={ref} class:list={[styles['Hero-label'], className]} {...rest}>
+  <slot />
+</Label>

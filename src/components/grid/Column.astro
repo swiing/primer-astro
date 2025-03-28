@@ -1,0 +1,49 @@
+---
+import styles from './Grid.module.css'
+
+type Props<T extends keyof JSX.IntrinsicElements = 'div'> = {
+    as?: T | 'div' | 'span' | 'section'
+    span?: GridColumnIndex | ResponsiveMap
+    start?: GridColumnIndex | ResponsiveMap
+  } & (T extends 'span'
+    ? BaseProps<HTMLSpanElement> & React.HTMLAttributes<HTMLSpanElement>
+    : T extends 'section'
+    ? BaseProps<HTMLElement> & React.HTMLAttributes<HTMLElement>
+    : BaseProps<HTMLDivElement> & React.HTMLAttributes<HTMLDivElement>)
+
+const {as = 'div', span = 12, start, class: className, ...rest} = Astro.props
+
+const validElements = ['div', 'span', 'section']
+const Component = validElements.includes(as) ? as : 'div'
+
+const columnClassArray = [styles['Grid__column']]
+
+if (typeof span === 'number') {
+  columnClassArray.push(styles[`Grid__column--span-${span}`])
+} else if (typeof span === 'object') {
+  for (const [key, value] of Object.entries(span)) {
+    if (key === 'xsmall') {
+      columnClassArray.push(styles[`Grid__column--xsmall-span-${value}`])
+    } else {
+      columnClassArray.push(styles[`Grid__column--${key}-span-${value}`])
+    }
+  }
+}
+
+if (typeof start === 'number') {
+  columnClassArray.push(styles[`Grid__column--start-${start}`])
+} else if (typeof start === 'object') {
+  for (const [key, value] of Object.entries(start)) {
+    if (key === 'xsmall') {
+      columnClassArray.push(styles[`Grid__column--xsmall-start-${value}`])
+    } else {
+      columnClassArray.push(styles[`Grid__column--${key}-start-${value}`])
+    }
+  }
+}
+  
+---
+
+<Component class:list={[columnClassArray, className]} {...rest}>
+  <slot />
+</Component>
