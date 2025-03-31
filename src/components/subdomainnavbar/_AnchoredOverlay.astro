@@ -1,0 +1,79 @@
+---
+import styles from './SubdomainNavBar.module.css'
+
+type AnchoredOverlayProps = {
+    visibilityMap: VisibilityMap
+  } & BaseProps<HTMLDivElement>
+  
+const {className, visibilityMap} = Astro.props
+
+// const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+
+
+// useOnClickOutside(ref, () => handleClose())
+
+const open = true // Boolean(anchorEl)
+
+// const handleClick = event => {
+//   if (anchorEl) {
+//     handleClose()
+//   } else {
+//     setAnchorEl(event.currentTarget)
+//   }
+// }
+
+// const handleClose = useCallback(() => {
+//   setAnchorEl(null)
+// }, [])
+
+// useKeyboardEscape(handleClose)
+
+// let html = '';
+// if (Astro.slots.has('default')) {
+//   html = await Astro.slots.render('default', [styles['SubdomainNavBar-overflow-menu-item']]);
+// }
+
+---
+  
+<li class:list={[styles['SubdomainNavBar-primary-nav-list-item--overflow'], className]}>
+  <!-- onClick={handleClick} -->
+  <button
+    aria-expanded={open ? 'true' : 'false'}
+    aria-controls="more-navigation"
+    aria-haspopup="true"
+    
+    class:list={[styles['SubdomainNavBar-link'], styles['SubdomainNavBar-more-link']]}
+  >
+    More
+    <!-- <ChevronDownIcon /> -->
+  </button>
+
+  <div
+    id="more-navigation"
+    style={{display: open ? 'block' : 'none'}}
+    class={styles['SubdomainNavBar-overflow-menu']}
+  >
+    <ul class={styles['SubdomainNavBar-overflow-menu-list']}>
+      {/* React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+          const navItemChild = child.props['data-navitemid']
+
+          if (!visibilityMap[navItemChild]) {
+            return (
+              <React.Fragment>
+                {React.cloneElement(child as React.ReactElement, {
+                  onClick: handleClose,
+                  className: clsx(styles['SubdomainNavBar-overflow-menu-item'], child.props.className),
+                })}
+              </React.Fragment>
+            )
+          }
+        }
+        return null
+      })*/}
+      <div class={styles['SubdomainNavBar-overflow-menu-item']}>
+      <slot />
+      </div>
+    </ul>
+  </div>
+</li>

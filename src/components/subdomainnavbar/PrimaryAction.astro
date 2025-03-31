@@ -1,0 +1,23 @@
+---
+import styles from './SubdomainNavBar.module.css'
+
+import Button from "../button/index.astro"
+
+type Props = {
+    href: string
+  } & React.HTMLAttributes<HTMLAnchorElement>
+
+const {href, ...rest} = Astro.props
+---
+
+<Button
+  as="a"
+  href={href}
+  class={styles['SubdomainNavBar-cta-button']}
+  variant="primary"
+  hasArrow={false}
+  size="small"
+  {...rest}
+>
+  <slot />
+</Button>

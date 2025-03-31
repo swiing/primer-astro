@@ -1,0 +1,17 @@
+---
+import styles from './SubdomainNavBar.module.css'
+
+type Props = {
+    href: string
+    isExternal?: boolean
+  } & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>
+
+const {href, class: className, isExternal = false, ...rest} = Astro.props
+---
+
+<li class:list={[styles['SubdomainNavBar-primary-nav-list-item'], className]} {...rest}>
+  <a href={href} class={styles['SubdomainNavBar-link']}>
+    <span class={styles['SubdomainNavBar-link-text']}><slot /></span>
+    {isExternal && <LinkExternalIcon size={16} aria-label="External link" />}
+  </a>
+</li>

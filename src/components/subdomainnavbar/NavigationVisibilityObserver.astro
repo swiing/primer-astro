@@ -1,0 +1,43 @@
+---
+import styles from './SubdomainNavBar.module.css'
+
+import AnchoredOverlay from "./_AnchoredOverlay.astro"
+
+import ChevronDownIcon from '@primer/octicons/icons/chevron-down-24.svg'
+
+// import {BaseProps} from '../component-helpers'
+// import {useVisibilityObserver} from './useVisibilityObserver'
+// import {useOnClickOutside} from '../hooks/useOnClickOutside'
+// import type {VisibilityMap} from './useVisibilityObserver'
+
+// import styles from './SubdomainNavBar.module.css'
+// import {useKeyboardEscape} from '../hooks/useKeyboardEscape'
+// import {useWindowSize} from '../hooks/useWindowSize'
+
+const {class: className, ...rest} = Astro.props
+
+
+// const [visibilityMap] = useVisibilityObserver(navRef, children)
+// const {isMedium} = useWindowSize()
+
+const showOverflow = true // Object.values(visibilityMap).includes(false)
+---
+
+<ul class:list={[styles['SubdomainNavBar-primary-nav-list'], className]} {...rest}>
+  {/* React.Children.map(children, child => {
+    return React.cloneElement(child, {
+      className: clsx(
+        child.props.className,
+        isMedium &&
+          !!visibilityMap[child.props['data-navitemid']] &&
+          styles['SubdomainNavBar-primary-nav-list-item--visible'],
+        isMedium &&
+          !visibilityMap[child.props['data-navitemid']] &&
+          styles['SubdomainNavBar-primary-nav-list-item--invisible'],
+      ),
+    })
+  }) */}
+  <slot />
+
+  {/* showOverflow && <AnchoredOverlay visibilityMap={"visibilityMap"}><slot /></AnchoredOverlay> */}
+</ul>

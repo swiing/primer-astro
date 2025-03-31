@@ -17,3 +17,8 @@ export { default as HeroDescription } from "./src/components/hero/Description.as
 export { default as HeroHeading } from "./src/components/hero/Heading.astro"
 export { default as HeroPrimaryAction } from "./src/components/hero/PrimaryAction.astro"
 export { default as HeroSecondaryAction } from "./src/components/hero/SecondaryAction.astro"
+
+export { default as SubdomainNavBar } from "./src/components/subdomainnavbar/index.astro"
+export { default as SubdomainNavBarLink } from "./src/components/subdomainnavbar/Link.astro"
+export { default as SubdomainNavBarPrimaryAction } from "./src/components/subdomainnavbar/PrimaryAction.astro"
+export { default as SubdomainNavBarSecondaryAction } from "./src/components/subdomainnavbar/SecondaryAction.astro"

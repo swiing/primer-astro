@@ -3,7 +3,10 @@
   "description": "collection of Github Primer components ported to Astrojs",
   "type": "module",
   "version": "0.0.1",
-  "exports": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./css/*": "./src/css/*"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -12,9 +15,14 @@
   },
   "dependencies": {
     "@primer/brand-primitives": "^0.47.2",
+    "@primer/octicons": "github:primer/octicons",
     "@primer/primitives": "^10.5.0",
     "@primer/react-brand": "^0.47.2",
     "astro": "^5.5.2"
   },
-  "files": ["./index.ts", "./src/components/"]
+  "files": [
+    "./index.ts",
+    "./src/components/",
+    "./src/css/"
+  ]
 }

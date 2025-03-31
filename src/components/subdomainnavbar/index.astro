@@ -1,0 +1,332 @@
+---
+// import {ChevronLeftIcon, /* LinkExternalIcon, */ MarkGithubIcon /*, SearchIcon, XIcon */} from '@primer/octicons-react'
+import ChevronLeftIcon from "@primer/octicons/icons/chevron-left-24.svg"
+import HomeIcon from "@primer/octicons/icons/home-24.svg"
+
+// import {Button, FormControl, Text, TextInput} from '..'
+import Button from "../button/index.astro"
+import Text from "../text/index.astro"
+
+import NavigationVisbilityObserver from './NavigationVisibilityObserver.astro'
+// import {useOnClickOutside} from '../hooks/useOnClickOutside'
+// import {useFocusTrap} from '../hooks/useFocusTrap'
+// import {useKeyboardEscape} from '../hooks/useKeyboardEscape'
+// import {useWindowSize} from '../hooks/useWindowSize'
+
+/**
+ * Design tokens
+ */
+import '@primer/brand-primitives/lib/design-tokens/css/tokens/functional/components/subdomain-nav-bar/colors-with-modes.css'
+
+/** * Main Stylesheet (as a CSS Module) */
+import styles from './SubdomainNavBar.module.css'
+/**
+ * Valid child elements are `SubdomainNavBar.Link`, `SubdomainNavBar.PrimaryAction`,
+ * `SubdomainNavBar.SecondaryAction` and `SubdomainNavBar.Search`
+ */
+
+type Props = {
+
+  /**
+   * Forward a custom HTML class attribute
+   */
+  class?: string
+  /**
+   * Fixes the navigation bar to the top of the viewport. Defaults to `true`.
+   */
+  fixed?: boolean
+  /**
+   * Fill the maximum width of the parent container. Defaults to `false`.
+   */
+  fullWidth?: boolean
+  /**
+   * The title or name of the subdomain. Appears adjacent to the logo and is required for communicating content to assisitive technologies.
+   */
+  title: string
+  /**
+   * The URL for the site. Typically used to link the titleText prop value to the site root.
+   */
+  titleHref?: string
+  /**
+   * Optionally change the URL of the logo
+   */
+  logoHref?: string
+}
+
+const {
+  class: className,
+  fixed = true,
+  fullWidth = false,
+  logoHref = '/', // 'https://github.com',
+  title,
+  titleHref = '/',
+  ...rest
+} = Astro.props
+
+const menuHidden = true
+// const [searchVisible, setSearchVisible] = useState(false)
+const searchVisible = false
+// const {isSmall, isMedium} = useWindowSize()
+
+// const [startOfContentButtonFocused, setStartOfContentButtonFocused] = useState(false)
+const startOfContentButtonFocused = false
+// const mainElRef = useRef<HTMLElement | null>(null)
+const startOfContentID = 'start-of-content'
+
+// const handleSearchVisibility = () => setSearchVisible(!searchVisible)
+
+// useEffect(() => {
+  const mainEl = undefined // document.querySelector('main')
+  if (mainEl) {
+    mainEl.id = mainEl.id || startOfContentID
+    // mainElRef.current = mainEl
+  }
+// }, [startOfContentID])
+
+// useFocusTrap({containerRef: focusTrapRef, restoreFocusOnCleanUp: true, disabled: menuHidden})
+// useKeyboardEscape(() => {
+//   setMenuHidden(true)
+// })
+
+
+// useEffect(() => {
+//   const newOverflowState = menuHidden ? 'auto' : 'hidden'
+//   document.body.style.overflow = newOverflowState
+// }, [menuHidden])
+
+// const setStartOfContentButtonFocusedTrue = useCallback(() => setStartOfContentButtonFocused(true), [])
+// const setStartOfContentButtonFocusedFalse = useCallback(() => setStartOfContentButtonFocused(false), [])
+
+const hasLinks = Astro.slots.has("Link")
+
+// const menuItems = useMemo(
+//   () =>
+//     React.Children.toArray(children)
+//       .map((child, index) => {
+//         if (React.isValidElement(child) && typeof child.type !== 'string') {
+//           if (child.type === Link) {
+//             return React.cloneElement(child as React.ReactElement, {
+//               'data-navitemid': child.props.children,
+//               href: child.props.href,
+//               children: child.props.children,
+//               style: {
+//                 [`--animation-order`]: index,
+//               },
+//             })
+//           }
+//           return null
+//         }
+//       })
+//       .filter(Boolean),
+//   [children],
+// )
+
+const hasAllActions: boolean = Astro.slots.has("PrimaryAction") && Astro.slots.has("SecondaryAction")
+---
+
+<div
+  class:list={[
+    styles['SubdomainNavBar-outer-container'],
+    fixed && styles['SubdomainNavBar-outer-container--fixed'],
+    hasAllActions && styles['SubdomainNavBar-outer-container--has-actions'],
+  ]}
+>
+
+  <Button
+    as="a"
+    href={`#${mainEl?.id || startOfContentID}`}
+    variant="primary"
+    class:list={[styles['SubdomainNavBar-skip-to-content'], !startOfContentButtonFocused && 'visually-hidden']}
+  >
+  <!-- onFocus={setStartOfContentButtonFocusedTrue}
+  onBlur={setStartOfContentButtonFocusedFalse} -->
+    Skip to content
+  </Button>
+
+  <header
+    class:list={[styles['SubdomainNavBar'], className]} 
+    {...rest}
+  >
+    <div
+      class:list={[
+        styles['SubdomainNavBar-inner-container'],
+        searchVisible && styles['SubdomainNavBar-inner-container--search-open'],
+        !fullWidth && styles['SubdomainNavBar-inner-container--centered'],
+      ]}
+    >
+    <nav aria-label="Header logo and title">
+      <ol class={styles['SubdomainNavBar-title-area']}>
+      <li>
+        <a href={logoHref} aria-label="Github Home" class={styles['SubdomainNavBar-logo-mark']}>
+        <span class={styles['SubdomainNavBar-back-arrow']}>
+          <ChevronLeftIcon fill="currentColor" size={24} />
+        </span>
+        <HomeIcon fill="currentColor" size={24} />
+        </a>
+      </li>
+      {title /* && isSmall */ && (
+        <li role="separator" class:list={["max-sm:!hidden",styles['SubdomainNavBar-title-separator']]} aria-hidden>
+          /
+        </li>
+        <li class:list={"max-sm:!hidden"}>
+          <a
+            href={titleHref}
+            aria-label={`${title} home`}
+            class={styles['SubdomainNavBar-title']}
+          >
+          <Text size="400" weight="semibold">
+            {title}
+          </Text>
+          </a>
+        </li>
+      )}
+      </ol>
+    </nav>
+
+    {hasLinks && (
+      <nav
+        id="menu-navigation"
+        aria-label={title}
+        class={styles['SubdomainNavBar-primary-nav']}
+      >
+      <NavigationVisbilityObserver class={styles['SubdomainNavBar-primary-nav-list--invisible']}>
+        <slot name="Link" />
+      </NavigationVisbilityObserver>
+      </nav>
+    )}
+
+    <div class={styles['SubdomainNavBar-secondary-nav']}>
+
+      {/*
+      {React.Children.toArray(children)
+      .map(child => {
+        if (React.isValidElement(child) && typeof child.type !== 'string') {
+        if (child.type === Search) {
+          return React.cloneElement(child as React.ReactElement, {
+          active: searchVisible,
+          handlerFn: handleSearchVisibility,
+          title,
+          })
+        }
+        return null
+        }
+      })
+      .filter(Boolean)}
+      */}
+      <slot name="search" />
+
+      {hasLinks && (
+      <button
+        aria-expanded={!menuHidden}
+        aria-label="Menu"
+        aria-controls="menu-navigation"
+        aria-haspopup="true"
+        class:list={[
+          styles['SubdomainNavBar-menu-button'],
+          styles['SubdomainNavBar-mobile-menu-button'],
+          !menuHidden && styles['SubdomainNavBar-menu-button--close'],
+        ]}
+        
+      >
+        {/* onClick={handleMobileMenuClick} */}
+        <div class={styles['SubdomainNavBar-menu-button-bar']}></div>
+        <div class={styles['SubdomainNavBar-menu-button-bar']}></div>
+        <div class={styles['SubdomainNavBar-menu-button-bar']}></div>
+      </button>
+      )}
+
+      { //isMedium && 
+      (
+      <div
+        class:list={[
+          "max-sm:hidden",
+          styles['SubdomainNavBar-button-area'],
+          styles['SubdomainNavBar-button-area--visible'],
+        ]}
+      >
+        <div class:list={[styles['SubdomainNavBar-button-area-inner']]}>
+          <slot name="PrimaryAction" />
+          <slot name="SecondaryAction" />
+        </div>
+      </div>
+      )}
+
+      { // !isMedium && 
+      (
+      <div
+        class:list={[
+          "max-sm:!hidden",
+          styles['SubdomainNavBar-menu-wrapper'],
+          /* menuHidden && */ styles['SubdomainNavBar-menu-wrapper--close'],
+        ]}
+      >
+        <div>
+        {/* {title && titleHref && (
+          <Text as="p">
+            <a
+              href={titleHref}
+              aria-label={`${title} home`}
+              class:list={[styles['SubdomainNavBar-link'], styles['SubdomainNavBar-link--title']]}
+            >
+              {title}
+            </a>
+          </Text>
+        )} */}
+        {hasLinks && /* !menuHidden => superfluous because is menuHidden, the whole div has display=none && */ (
+          <NavigationVisbilityObserver
+            showOnlyOnNarrow
+            class={styles['SubdomainNavBar-primary-nav-list--visible']}
+          >
+            <slot name="Link" />
+          </NavigationVisbilityObserver>
+        )}
+        </div>
+        <div
+          class:list={[
+            styles['SubdomainNavBar-button-area'],
+            styles['SubdomainNavBar-button-area--visible'],
+          ]}
+        >
+        <div class={styles['SubdomainNavBar-button-area-inner']}>
+          <slot name="PrimaryAction" />
+          <slot name="SecondaryAction" />
+        </div>
+        </div>
+      </div>
+      )}
+    </div>
+    </div>
+  </header>
+</div>
+{!mainEl && <div id={`${startOfContentID}`} tab-index={-1} />}
+
+
+<style is:inline>
+@media (width < 48rem) { /* --brand-breakpoint-medium */
+  .max-sm\:hidden {
+    display:none
+  }
+}
+
+.max-sm\:\!hidden {
+  display:none
+}
+@media (width < 48rem) { /* --brand-breakpoint-medium */
+  .max-sm\:\!hidden {
+    display:unset
+  }
+}
+</style>
+
+<script define:vars={{styles}}>
+  const menuButton = document.querySelector('[aria-controls="menu-navigation"]')
+  menuButton?.addEventListener('click', () => {
+    if(menuButton.getAttribute("aria-expanded") === "false") {
+      menuButton.setAttribute("aria-expanded", "true")
+      menuButton.classList.add(styles['SubdomainNavBar-menu-button--close'])
+    } else {
+      menuButton.setAttribute("aria-expanded", "false")
+      menuButton.classList.remove(styles['SubdomainNavBar-menu-button--close'])
+    }
+  })
+</script>
